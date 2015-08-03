@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23020.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes", "PrayerTimes.csproj", "{45E9D8CC-D1BA-4FD0-AB57-49227EA887AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes", "PrayerTimes\PrayerTimes.csproj", "{45E9D8CC-D1BA-4FD0-AB57-49227EA887AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes.Test", "..\PrayerTimes.Test\PrayerTimes.Test.csproj", "{1FD15B32-6CAA-4490-912E-4FD0E1955F50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes.Test", "PrayerTimes.Test\PrayerTimes.Test.csproj", "{1FD15B32-6CAA-4490-912E-4FD0E1955F50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

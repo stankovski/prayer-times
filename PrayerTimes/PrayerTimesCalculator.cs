@@ -9,98 +9,13 @@ using System.Collections.Generic;
 
 namespace PrayerTimes
 {
+    /// <summary>
+    /// Prayer times calculator.
+    /// </summary>
     public class PrayerTimesCalculator
     {
-        #region Constants
-        // Adjusting Methods for Higher Latitudes
-        int None = 0;    // No adjustment
-        int MidNight = 1;    // middle of night
-        int OneSeventh = 2;    // 1/7th of night
-        int AngleBased = 3;    // angle/60th of night
-
-
-        // Time Formats
-        int Time24 = 0;    // 24-hour format
-        int Time12 = 1;    // 12-hour format
-        int Time12NS = 2;    // 12-hour format with no suffix
-        int Float = 3;    // floating point number 
-
-        // Time Names
-        string[] timeNames = new string[]{
-                "Fajr",
-                "Sunrise",
-                "Dhuhr",
-                "Asr",
-                "Sunset",
-                "Maghrib",
-                "Isha"
-        };
-
-        #endregion
-
-        #region Global Variables
-        int dhuhrMinutes = 0;           // minutes after mid-day for Dhuhr
-        int adjustHighLats = 1;         // adjusting method for higher latitudes
-
-        int timeFormat = 0;             // time format
-
-        double lat;        // latitude 
-        double lng;        // longitude 
-        int timeZone;   // time-zone 
-        double jDate;      // Julian date
-        #endregion
-
-        #region Technical Settings
-        int numIterations = 1;          // number of iterations needed to compute times, this should never be more than 1;
-        #endregion
-
-        /// <summary>
-        /// Calculation method.
-        /// </summary>
-        public CalculationMethods CalculationMethod
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// Juristic method for Asr.
-        /// </summary>
-        public AsrJuristicMethods AsrJurusticMethod
-        {
-            get; set;
-        }
-
-        ///<summary>
-        /// Returns the prayer times for a given date , the date format is specified as individual settings.
-        /// </summary>
-        /// <param name="year">Year to use when calculating times</param>        
-        /// <param name="month">Month to use when calculating times</param>
-        /// <param name="day">Day to use when calculating times</param>
-        /// <param name="latitude">Latitude to use when calculating times</param>
-        /// <param name="longitude">Longitude to use when calculating times</param>
-        /// <param name="timeZone">Time zone to use when calculating times</param>
-        /// <returns>
-        /// A string Array containing the Salaah times,The time is in the 24 hour format.
-        /// The array is structured as such.
-        /// 0.Fajr
-        /// 1.Sunrise
-        /// 2.Dhuhr
-        /// 3.Asr
-        /// 4.Sunset
-        /// 5.Maghrib
-        /// 6.Isha
-        /// </returns>
-        public Times GetPrayerTimes(DateTimeOffset date, double latitude, double longitude, int? timeZone = null)
-        {
-            lat = latitude;
-            lng = longitude;
-            this.timeZone = effectiveTimeZone(date, timeZone);
-            jDate = julianDate(date.Year, date.Month, date.Day) - longitude / (15 * 24);
-            var times = computeDayTimes();
-            times.Date = date;
-            return times;
-        }
-
+        const int NumIterations = 1;    // number of iterations needed to compute times, this should never be more than 1;
+        const int dhuhrMinutes = 0;     // minutes after mid-day for Dhuhr
         /// <summary>
         ///  methodParams[methodNum] = new Array(fa, ms, mv, is, iv);   
         ///     fa : fajr angle
@@ -109,7 +24,7 @@ namespace PrayerTimes
         ///     is : isha selector (0 = angle; 1 = minutes after maghrib)
         ///     iv : isha parameter value (in angle or minutes)
         /// </summary>
-        private readonly Dictionary<CalculationMethods, double[]> methodParams = new Dictionary<CalculationMethods, double[]> {
+        private readonly Dictionary<CalculationMethods, double[]> _methodParams = new Dictionary<CalculationMethods, double[]> {
             { CalculationMethods.Jafari, new double[] { 16, 0, 4, 0, 14 } },
             { CalculationMethods.Karachi,new double[]{18, 1, 0, 0, 18} },
             { CalculationMethods.ISNA,new double[]{15, 1, 0, 0, 15} },
@@ -117,59 +32,64 @@ namespace PrayerTimes
             { CalculationMethods.Makkah,new double[]{19, 1, 0, 1, 90} },
             { CalculationMethods.Egypt,new double[]{19.5, 1, 0, 0, 17.5} },
             { CalculationMethods.Custom,new double[]{18, 1, 0, 0, 17} }};
-        
-        // set the angle for calculating Fajr
-        private void setFajrAngle(double angle)
+
+        private readonly double _latitude;        // latitude 
+        private readonly double _longitude;        // longitude 
+
+        /// <summary>
+        /// Initializes a new instance of PrayerTimesCalculator.
+        /// </summary>
+        /// <param name="latitude"></param>
+        /// <param name="longitude"></param>
+        public PrayerTimesCalculator(double latitude, double longitude)
         {
-            this.setCustomParams(new double?[] { angle, null, null, null, null });
+            _latitude = latitude;
+            _longitude = longitude;
         }
 
-        // set the angle for calculating Maghrib
-        private void setMaghribAngle(double angle)
+        /// <summary>
+        /// Gets or sets calculation method.
+        /// </summary>
+        public CalculationMethods CalculationMethod
         {
-            this.setCustomParams(new double?[] { null, 0, angle, null, null });
+            get; set;
         }
 
-        // set the angle for calculating Isha
-        private void setIshaAngle(double angle)
+        /// <summary>
+        /// Gets or sets juristic method for Asr.
+        /// </summary>
+        public AsrJuristicMethods AsrJurusticMethod
         {
-            this.setCustomParams(new double?[] { null, null, null, 0, angle });
+            get; set;
         }
 
-
-        // set the minutes after mid-day for calculating Dhuhr
-        private void setDhuhrMinutes(int minutes)
+        /// <summary>
+        /// Gets or sets adjustment method for higher latitudes.
+        /// </summary>
+        public HighLatitudeAdjustmentMethods HighLatitudeAdjustmentMethod
         {
-            this.dhuhrMinutes = minutes;
+            get; set;
         }
 
-        // set the minutes after Sunset for calculating Maghrib
-        private void setMaghribMinutes(int minutes)
+        ///<summary>
+        /// Returns the prayer times for a given date , the date format is specified as individual settings.
+        /// </summary>
+        /// <param name="date">Date time representing the date for which times should be calculated.</param>        
+        /// <param name="timeZone">Time zone to use when calculating times. If omitted, time zone from date is used.</param>
+        /// <returns>
+        /// Times structure containing the Salaah times.
+        /// </returns>
+        public Times GetPrayerTimes(DateTimeOffset date, int? timeZone = null)
         {
-            this.setCustomParams(new double?[] { null, 1, minutes, null, null });
+            timeZone = EffectiveTimeZone(date, timeZone);
+            var jDate = JulianDate(date.Year, date.Month, date.Day) - _longitude / (15 * 24);
+            var times = ComputeDayTimes(jDate, timeZone.Value);
+            times.Date = date;
+            return times;
         }
-
-        // set the minutes after Maghrib for calculating Isha
-        private void setIshaMinutes(int minutes)
-        {
-            this.setCustomParams(new double?[] { null, null, null, 1, minutes });
-        }
-
-        // set custom values for calculation parameters
-        private void setCustomParams(double?[] userParams)
-        {
-            for (var i = 0; i < 5; i++)
-            {
-                if (userParams[i] == null)
-                    this.methodParams[CalculationMethods.Custom][i] = this.methodParams[this.CalculationMethod][i];
-                else
-                    this.methodParams[CalculationMethods.Custom][i] = userParams[i].Value;
-            }
-            this.CalculationMethod = CalculationMethods.Custom;
-        }
-
+       
         // convert float hours to 24h format
-        private TimeSpan floatToTimeSpan(double time)
+        private TimeSpan FloatToTimeSpan(double time)
         {
             time = this.fixhour(time + 0.5 / 60);  // add 0.5 minutes to round
             var hours = Math.Floor(time);
@@ -181,7 +101,7 @@ namespace PrayerTimes
         // http://www.ummah.net/astronomy/saltime  
         // http://aa.usno.navy.mil/faq/docs/SunApprox.html
         // compute declination angle of sun and equation of time
-        private double[] sunPosition(double jd)
+        private double[] SunPosition(double jd)
         {
             var D = jd - 2451545.0;
             var g = this.fixangle(357.529 + 0.98560028 * D);
@@ -200,180 +120,175 @@ namespace PrayerTimes
         }
 
         // compute equation of time
-        private double equationOfTime(double jd)
+        private double EquationOfTime(double jd)
         {
-            return this.sunPosition(jd)[1];
+            return this.SunPosition(jd)[1];
         }
 
         // compute declination angle of sun
-        private double sunDeclination(double jd)
+        private double SunDeclination(double jd)
         {
-            return this.sunPosition(jd)[0];
+            return this.SunPosition(jd)[0];
         }
 
         // compute mid-day (Dhuhr, Zawal) time
-        private double computeMidDay(double t)
+        private double ComputeMidDay(double jDate, double t)
         {
-            var T = this.equationOfTime(this.jDate + t);
+            var T = this.EquationOfTime(jDate + t);
             var Z = this.fixhour(12 - T);
             return Z;
         }
 
         // compute time for a given angle G
-        private double computeTime(double G, double t)
+        private double ComputeTime(double jDate, double G, double t)
         {
-            var D = this.sunDeclination(this.jDate + t);
-            var Z = this.computeMidDay(t);
-            double V = ((double)(1 / 15d)) * this.darccos((-this.dsin(G) - this.dsin(D) * this.dsin(this.lat)) /
-                            (this.dcos(D) * this.dcos(this.lat)));
+            var D = this.SunDeclination(jDate + t);
+            var Z = this.ComputeMidDay(jDate, t);
+            double V = ((double)(1 / 15d)) * this.darccos((-this.dsin(G) - this.dsin(D) * this.dsin(this._latitude)) /
+                            (this.dcos(D) * this.dcos(this._latitude)));
             return Z + (G > 90 ? -V : V);
         }
 
         // compute the time of Asr
-        private double computeAsr(AsrJuristicMethods method, double t)  // Shafii: step=1, Hanafi: step=2
+        private double ComputeAsr(AsrJuristicMethods method, double jDate, double t)  // Shafii: step=1, Hanafi: step=2
         {
             var step = 1;
             if (method == AsrJuristicMethods.Hanafi)
             {
                 step = 2;
             }
-            var D = this.sunDeclination(this.jDate + t);
-            var G = -this.darccot(step + this.dtan(Math.Abs(this.lat - D)));
-            return this.computeTime(G, t);
+            var D = this.SunDeclination(jDate + t);
+            var G = -this.darccot(step + this.dtan(Math.Abs(this._latitude - D)));
+            return this.ComputeTime(jDate, G, t);
         }
 
         // compute prayer times at given julian date
-        private double[] computeTimes(double[] times)
+        private double[] ComputeTimes(double jDate, double[] times)
         {
-            var t = this.dayPortion(times);
+            var t = this.DayPortion(times);
 
-            var Fajr = this.computeTime(180 - this.methodParams[this.CalculationMethod][0], t[0]);
-            var Sunrise = this.computeTime(180 - 0.833, t[1]);
-            var Dhuhr = this.computeMidDay(t[2]);
-            var Asr = this.computeAsr(this.AsrJurusticMethod, t[3]);
-            var Sunset = this.computeTime(0.833, t[4]); ;
-            var Maghrib = this.computeTime(this.methodParams[this.CalculationMethod][2], t[5]);
-            var Isha = this.computeTime(this.methodParams[this.CalculationMethod][4], t[6]);
+            var Fajr = this.ComputeTime(jDate, 180 - this._methodParams[this.CalculationMethod][0], t[0]);
+            var Sunrise = this.ComputeTime(jDate, 180 - 0.833, t[1]);
+            var Dhuhr = this.ComputeMidDay(jDate, t[2]);
+            var Asr = this.ComputeAsr(this.AsrJurusticMethod, jDate, t[3]);
+            var Sunset = this.ComputeTime(jDate, 0.833, t[4]); ;
+            var Maghrib = this.ComputeTime(jDate, this._methodParams[this.CalculationMethod][2], t[5]);
+            var Isha = this.ComputeTime(jDate, this._methodParams[this.CalculationMethod][4], t[6]);
 
             return new double[] { Fajr, Sunrise, Dhuhr, Asr, Sunset, Maghrib, Isha };
         }
 
 
         // compute prayer times at given julian date
-        private Times computeDayTimes()
+        private Times ComputeDayTimes(double jDate, int timeZone)
         {
             double[] times = new double[] { 5, 6, 12, 13, 18, 18, 18 }; //default times
 
-            for (var i = 1; i <= this.numIterations; i++)
-                times = this.computeTimes(times);
+            for (var i = 1; i <= NumIterations; i++)
+                times = this.ComputeTimes(jDate, times);
 
-            times = this.adjustTimes(times);
-            return this.adjustTimesFormat(times);
+            times = this.AdjustTimes(timeZone, times);
+            return this.AdjustTimesFormat(times);
         }
 
 
         // adjust times in a prayer time array
-        private double[] adjustTimes(double[] times)
+        private double[] AdjustTimes(int timeZone, double[] times)
         {
             for (var i = 0; i < 7; i++)
-                times[i] += this.timeZone - this.lng / 15;
-            times[2] += this.dhuhrMinutes / 60; //Dhuhr
-            if (this.methodParams[this.CalculationMethod][1] == 1) // Maghrib
-                times[5] = times[4] + this.methodParams[this.CalculationMethod][2] / 60;
-            if (this.methodParams[this.CalculationMethod][3] == 1) // Isha
-                times[6] = times[5] + this.methodParams[this.CalculationMethod][4] / 60;
+            {
+                times[i] += timeZone - this._longitude / 15;
+            }
+            times[2] += dhuhrMinutes / 60; //Dhuhr
 
-            if (this.adjustHighLats != this.None)
-                times = this.adjustHighLatTimes(times);
+            if (this._methodParams[this.CalculationMethod][1] == 1) // Maghrib
+            {
+                times[5] = times[4] + this._methodParams[this.CalculationMethod][2] / 60;
+            }
+
+            if (this._methodParams[this.CalculationMethod][3] == 1) // Isha
+            {
+                times[6] = times[5] + this._methodParams[this.CalculationMethod][4] / 60;
+            }
+
+            if (this.HighLatitudeAdjustmentMethod != HighLatitudeAdjustmentMethods.None)
+            {
+                times = this.AdjustHighLatTimes(times);
+            }
             return times;
         }
 
 
         // convert times array to given time format
-        private Times adjustTimesFormat(double[] times)
+        private Times AdjustTimesFormat(double[] times)
         {
             Times returnData = new Times();
 
-            if (this.timeFormat == this.Float)
-                return returnData;
-            returnData.Fajr = floatToTimeSpan(times[0]);
-            returnData.Sunrise = floatToTimeSpan(times[1]);
-            returnData.Dhuhr = floatToTimeSpan(times[2]);
-            returnData.Asr = floatToTimeSpan(times[3]);
-            returnData.Sunset = floatToTimeSpan(times[4]);
-            returnData.Maghrib = floatToTimeSpan(times[5]);
-            returnData.Isha = floatToTimeSpan(times[6]);
+            returnData.Fajr = FloatToTimeSpan(times[0]);
+            returnData.Sunrise = FloatToTimeSpan(times[1]);
+            returnData.Dhuhr = FloatToTimeSpan(times[2]);
+            returnData.Asr = FloatToTimeSpan(times[3]);
+            returnData.Sunset = FloatToTimeSpan(times[4]);
+            returnData.Maghrib = FloatToTimeSpan(times[5]);
+            returnData.Isha = FloatToTimeSpan(times[6]);
             return returnData;
         }
 
 
         // adjust Fajr, Isha and Maghrib for locations in higher latitudes
-        private double[] adjustHighLatTimes(double[] times)
+        private double[] AdjustHighLatTimes(double[] times)
         {
-            var nightTime = this.timeDiff(times[4], times[1]); // sunset to sunrise
+            var nightTime = this.TimeDiff(times[4], times[1]); // sunset to sunrise
 
             // Adjust Fajr
-            var FajrDiff = this.nightPortion(methodParams[this.CalculationMethod][0]) * nightTime;
-            if (double.IsNaN(times[0]) || this.timeDiff(times[0], times[1]) > FajrDiff)
+            var FajrDiff = this.NightPortion(_methodParams[this.CalculationMethod][0]) * nightTime;
+            if (double.IsNaN(times[0]) || this.TimeDiff(times[0], times[1]) > FajrDiff)
                 times[0] = times[1] - FajrDiff;
 
             // Adjust Isha
-            var IshaAngle = (this.methodParams[this.CalculationMethod][3] == 0) ? this.methodParams[this.CalculationMethod][4] : 18;
-            var IshaDiff = this.nightPortion(IshaAngle) * nightTime;
-            if (double.IsNaN(times[6]) || this.timeDiff(times[4], times[6]) > IshaDiff)
+            var IshaAngle = (this._methodParams[this.CalculationMethod][3] == 0) ? this._methodParams[this.CalculationMethod][4] : 18;
+            var IshaDiff = this.NightPortion(IshaAngle) * nightTime;
+            if (double.IsNaN(times[6]) || this.TimeDiff(times[4], times[6]) > IshaDiff)
                 times[6] = times[4] + IshaDiff;
 
             // Adjust Maghrib
-            var MaghribAngle = (this.methodParams[this.CalculationMethod][1] == 0) ? this.methodParams[this.CalculationMethod][2] : 4;
-            var MaghribDiff = this.nightPortion(MaghribAngle) * nightTime;
-            if (double.IsNaN(times[5]) || this.timeDiff(times[4], times[5]) > MaghribDiff)
+            var MaghribAngle = (this._methodParams[this.CalculationMethod][1] == 0) ? this._methodParams[this.CalculationMethod][2] : 4;
+            var MaghribDiff = this.NightPortion(MaghribAngle) * nightTime;
+            if (double.IsNaN(times[5]) || this.TimeDiff(times[4], times[5]) > MaghribDiff)
                 times[5] = times[4] + MaghribDiff;
 
             return times;
         }
 
-
         // the night portion used for adjusting times in higher latitudes
-        private double nightPortion(double angle)
+        private double NightPortion(double angle)
         {
-            if (this.adjustHighLats == this.AngleBased)
+            if (this.HighLatitudeAdjustmentMethod == HighLatitudeAdjustmentMethods.AngleBased)
                 return 1 / 60 * angle;
-            if (this.adjustHighLats == this.MidNight)
+            if (this.HighLatitudeAdjustmentMethod == HighLatitudeAdjustmentMethods.MidNight)
                 return 1 / 2d;
-            if (this.adjustHighLats == this.OneSeventh)
+            if (this.HighLatitudeAdjustmentMethod == HighLatitudeAdjustmentMethods.OneSeventh)
                 return 1 / 7d;
 
             return 0;
         }
 
-
         // convert hours to day portions 
-        private double[] dayPortion(double[] times)
+        private double[] DayPortion(double[] times)
         {
             for (var i = 0; i < 7; i++)
                 times[i] /= 24;
             return times;
         }
         
-        #region Misc Functions
-        // compute the difference between two times 
-        private double timeDiff(int time1, int time2)
+        #region Utility Functions
+        private double TimeDiff(double time1, double time2)
         {
             return this.fixhour(time2 - time1);
         }
-        private double timeDiff(double time1, double time2)
-        {
-            return this.fixhour(time2 - time1);
-        }
-
-        // add a leading 0 if necessary
-        private string twoDigitsFormat(int num)
-        {
-            return (num < 10) ? "0" + num.ToString() : num.ToString();
-        }
-        
+       
         // calculate julian date from a calendar date
-        private double julianDate(int year, int month, int day)
+        private double JulianDate(int year, int month, int day)
         {
             double A = Math.Floor((double)(year / 100));
             double B = Math.Floor(A / 4);
@@ -387,19 +302,8 @@ namespace PrayerTimes
             return JD;
         }
 
-
-        // convert a calendar date to julian date (second method)
-        private double calcJD(int year, int month, int day)
-        {
-            var J1970 = 2440588.0;
-            TimeSpan TS = new TimeSpan(year, month - 1, day);
-            var ms = TS.TotalMilliseconds;   // # of milliseconds since midnight Jan 1, 1970
-            var days = Math.Floor((double)ms / (1000 * 60 * 60 * 24));
-            return J1970 + days - 0.5;
-        }
-
         // return effective timezone for a given date
-        private int effectiveTimeZone(DateTimeOffset date, int? timeZone)
+        private int EffectiveTimeZone(DateTimeOffset date, int? timeZone)
         {
             if (timeZone == null)
                 timeZone = date.Offset.Hours;
