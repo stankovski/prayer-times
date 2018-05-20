@@ -87,7 +87,42 @@ namespace PrayerTimes
             times.Date = date;
             return times;
         }
-       
+        /// <summary>
+        /// uses the custom Fajr angle if the Custom Method is used
+        /// </summary>
+        /// <param name="FajrAngle"></param>
+        public void SetCustomAngles(double fajrAngle,double ishaAngle) {
+            this._methodParams[CalculationMethods.Custom][0] = fajrAngle;
+            this._methodParams[CalculationMethods.Custom][4] = ishaAngle;
+        } 
+
+        public double GetFajrAngle(TimeSpan FajrTime,DateTimeOffset date)
+        {
+            double[] times = new double[] { 5, 6, 12, 13, 18, 18, 18 }; //default times
+
+            var t = this.DayPortion(times);
+            var jDate = JulianDate(date.Year, date.Month, date.Day) - _longitude / (15 * 24);
+            var D = this.SunDeclination(jDate + t[0]);
+            var Dhuhr = this.ComputeMidDay(jDate, t[2]);
+
+            double fajrDoubleTime = (double)FajrTime.Hours + (FajrTime.Minutes / 60.0) - date.Offset.Hours + this._longitude/15.0;
+
+            return darcsin(-dsin(this._latitude) * dsin(D) - dcos(15 * (Dhuhr - fajrDoubleTime)) * dcos(this._latitude) * dcos(D));
+        }
+
+        public double GetIshaAngle(TimeSpan IshaTime, DateTimeOffset date)
+        {
+            double[] times = new double[] { 5, 6, 12, 13, 18, 18, 18 }; //default times
+
+            var t = this.DayPortion(times);
+            var jDate = JulianDate(date.Year, date.Month, date.Day) - _longitude / (15 * 24);
+            var D = this.SunDeclination(jDate + t[0]);
+            var Dhuhr = this.ComputeMidDay(jDate, t[2]);
+
+            double ishaDoubleTime = (double)IshaTime.Hours + (IshaTime.Minutes / 60.0) - date.Offset.Hours + this._longitude / 15.0;
+
+            return darcsin(-dsin(this._latitude) * dsin(D) - dcos(15 * (ishaDoubleTime - Dhuhr)) * dcos(this._latitude) * dcos(D));
+        }
         // convert float hours to 24h format
         private TimeSpan FloatToTimeSpan(double time)
         {

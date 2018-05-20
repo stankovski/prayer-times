@@ -81,5 +81,15 @@ namespace PrayerTimes.Test
             Assert.Equal(new DateTime(2015, 2, 3), times[33].Date);
             Assert.Equal(new TimeSpan(6, 8, 0), times[33].Fajr);
         }
+
+        [Fact]
+        public void TestGetFajrAngle()
+        {
+            PrayerTimesCalculator calculator = new PrayerTimesCalculator(49.744, 6.6188);
+
+            var fajrAngle = calculator.GetFajrAngle(new TimeSpan(3, 33, 0), DateTimeOffset.Now);
+            var ishaAngle = calculator.GetFajrAngle(new TimeSpan(23, 15, 0), DateTimeOffset.Now);
+
+        }
     }
 }
