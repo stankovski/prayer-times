@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes", "PrayerTimes\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes.Test", "PrayerTimes.Test\PrayerTimes.Test.csproj", "{0A739364-2178-4B0F-945A-131605E3EBCC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes.Api", "PrayerTimes.Api\PrayerTimes.Api.csproj", "{70C294D6-8141-41A1-A975-9B98132B003D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes.Api.Test", "PrayerTimes.Api.Test\PrayerTimes.Api.Test.csproj", "{A7E41B6C-4E36-4C9A-9887-2333A0E249A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{0A739364-2178-4B0F-945A-131605E3EBCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A739364-2178-4B0F-945A-131605E3EBCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A739364-2178-4B0F-945A-131605E3EBCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70C294D6-8141-41A1-A975-9B98132B003D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70C294D6-8141-41A1-A975-9B98132B003D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70C294D6-8141-41A1-A975-9B98132B003D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70C294D6-8141-41A1-A975-9B98132B003D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7E41B6C-4E36-4C9A-9887-2333A0E249A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7E41B6C-4E36-4C9A-9887-2333A0E249A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7E41B6C-4E36-4C9A-9887-2333A0E249A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7E41B6C-4E36-4C9A-9887-2333A0E249A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

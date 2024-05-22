@@ -14,10 +14,11 @@ namespace PrayerTimes.Test
         [Fact]
         public void TestTimeForDst()
         {
-            PrayerTimesCalculator calc = new PrayerTimesCalculator(47.660918, -122.136371);
-            calc.CalculationMethod = CalculationMethods.ISNA;
-            calc.AsrJurusticMethod = AsrJuristicMethods.Shafii;
-            var times = calc.GetPrayerTimes(new DateTime(2015, 8, 3), -7);
+            var calcParams = new CalculatorParams(47.660918, -122.136371, 
+                CalculationMethods.ISNA, 
+                AsrJuristicMethods.Shafii);
+
+            var times = PrayerTimesCalculator.GetPrayerTimes(new DateTime(2015, 8, 3), calcParams, -7);
 
             Assert.Equal(new DateTime(2015, 8, 3), times.Date);
             Assert.Equal(new TimeSpan(4,1,0), times.Fajr);
@@ -32,10 +33,11 @@ namespace PrayerTimes.Test
         [Fact]
         public void TestTimeForDstAutoTimeZone()
         {
-            PrayerTimesCalculator calc = new PrayerTimesCalculator(47.660918, -122.136371);
-            calc.CalculationMethod = CalculationMethods.ISNA;
-            calc.AsrJurusticMethod = AsrJuristicMethods.Shafii;
-            var times = calc.GetPrayerTimes(new DateTime(2015, 8, 3, 0, 0, 0, DateTimeKind.Local));
+            var calcParams = new CalculatorParams(47.660918, -122.136371, 
+                CalculationMethods.ISNA, 
+                AsrJuristicMethods.Shafii);
+
+            var times = PrayerTimesCalculator.GetPrayerTimes(new DateTime(2015, 8, 3, 0, 0, 0, DateTimeKind.Local), calcParams);
 
             Assert.Equal(new DateTime(2015, 8, 3, 0, 0, 0, DateTimeKind.Local), times.Date);
             Assert.Equal(new TimeSpan(4, 1, 0), times.Fajr);
@@ -50,10 +52,11 @@ namespace PrayerTimes.Test
         [Fact]
         public void TestTimeForNonDst()
         {
-            PrayerTimesCalculator calc = new PrayerTimesCalculator(47.660918, -122.136371);
-            calc.CalculationMethod = CalculationMethods.ISNA;
-            calc.AsrJurusticMethod = AsrJuristicMethods.Shafii;
-            var times = calc.GetPrayerTimes(new DateTime(2015, 2, 3), -7);
+            var calcParams = new CalculatorParams(47.660918, -122.136371, 
+                CalculationMethods.ISNA, 
+                AsrJuristicMethods.Shafii);
+
+            var times = PrayerTimesCalculator.GetPrayerTimes(new DateTime(2015, 2, 3), calcParams, -7);
 
             Assert.Equal(new DateTime(2015, 2, 3), times.Date);
             Assert.Equal(new TimeSpan(6, 8, 0), times.Fajr);
@@ -68,14 +71,15 @@ namespace PrayerTimes.Test
         [Fact]
         public void TestTimesForYear()
         {
-            PrayerTimesCalculator calc = new PrayerTimesCalculator(47.660918, -122.136371);
-            calc.CalculationMethod = CalculationMethods.ISNA;
-            calc.AsrJurusticMethod = AsrJuristicMethods.Shafii;
+            var calcParams = new CalculatorParams(47.660918, -122.136371, 
+                CalculationMethods.ISNA, 
+                AsrJuristicMethods.Shafii);
+
             var times = new Times[365];
             for (int i = 0; i < 365; i ++)
             {
                 var date = new DateTimeOffset(new DateTime(2015, 1, 1));
-                times[i] = calc.GetPrayerTimes(date.AddDays(i), -7);
+                times[i] = PrayerTimesCalculator.GetPrayerTimes(date.AddDays(i), calcParams, -7);
             }
 
             Assert.Equal(new DateTime(2015, 2, 3), times[33].Date);

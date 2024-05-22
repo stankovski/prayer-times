@@ -1,0 +1,6 @@
+@PrayerTimes.Api_HostAddress = http://localhost:5247
+
+GET {{PrayerTimes.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

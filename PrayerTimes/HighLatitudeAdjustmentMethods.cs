@@ -1,8 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+using System.Text.Json.Serialization;
+
 namespace PrayerTimes
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum HighLatitudeAdjustmentMethods
     {
         None = 0,    // No adjustment
