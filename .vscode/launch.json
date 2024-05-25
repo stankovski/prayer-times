@@ -5,12 +5,49 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Docker .NET Container SDK Launch",
+            "name": "C#: PrayerTimes.Api Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/PrayerTimes.Api/PrayerTimes.Api.csproj"
+        },
+        {
+            "name": ".NET Core Launch (web)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/PrayerTimes.Api/bin/Debug/net8.0/PrayerTimes.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/PrayerTimes.Api",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        },
+        {
+            "name": "Docker .NET Launch",
             "type": "docker",
             "request": "launch",
+            "preLaunchTask": "docker-run: debug",
             "netCore": {
-                "appProject": "${workspaceFolder}/PrayerTimes.Api/PrayerTimes.Api.csproj",
-                "buildWithSdk": true
+                "appProject": "${workspaceFolder}/PrayerTimes.Api/PrayerTimes.Api.csproj"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+http://\\[::\\]:([0-9]+)",
+                "uriFormat": "http://localhost:%s/swagger"
             }
         }
     ]
