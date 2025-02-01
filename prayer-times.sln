@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes", "PrayerTimes\PrayerTimes.csproj", "{C8CA935B-ABEB-454A-B828-B5F2D05C43B9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes.Test", "PrayerTimes.Test\PrayerTimes.Test.csproj", "{0A739364-2178-4B0F-945A-131605E3EBCC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes.Api", "PrayerTimes.Api\PrayerTimes.Api.csproj", "{70C294D6-8141-41A1-A975-9B98132B003D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrayerTimes.Api.Test", "PrayerTimes.Api.Test\PrayerTimes.Api.Test.csproj", "{A7E41B6C-4E36-4C9A-9887-2333A0E249A9}"
@@ -20,14 +16,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C8CA935B-ABEB-454A-B828-B5F2D05C43B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8CA935B-ABEB-454A-B828-B5F2D05C43B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8CA935B-ABEB-454A-B828-B5F2D05C43B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8CA935B-ABEB-454A-B828-B5F2D05C43B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A739364-2178-4B0F-945A-131605E3EBCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A739364-2178-4B0F-945A-131605E3EBCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A739364-2178-4B0F-945A-131605E3EBCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A739364-2178-4B0F-945A-131605E3EBCC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{70C294D6-8141-41A1-A975-9B98132B003D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{70C294D6-8141-41A1-A975-9B98132B003D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70C294D6-8141-41A1-A975-9B98132B003D}.Release|Any CPU.ActiveCfg = Release|Any CPU

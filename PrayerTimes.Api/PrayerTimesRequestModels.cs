@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Batoulapps.Adhan;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PrayerTimes.Api
@@ -11,11 +12,11 @@ namespace PrayerTimes.Api
         [FromBody]
         double Longitude, 
         [FromBody]
-        CalculationMethods CalculationMethod, 
+        CalculationMethod CalculationMethod, 
         [FromBody]
-        AsrJuristicMethods AsrJuristicMethod, 
+        Madhab AsrJuristicMethod, 
         [FromBody]
-        HighLatitudeAdjustmentMethods HighLatitudeAdjustmentMethod = HighLatitudeAdjustmentMethods.None);
+        HighLatitudeRule HighLatitudeAdjustmentMethod);
 
     public record PrayerTimesRequestForRange(
         [FromBody]
@@ -29,9 +30,9 @@ namespace PrayerTimes.Api
         [FromBody]
         double Longitude, 
         [FromBody]
-        CalculationMethods CalculationMethod, 
+        CalculationMethod CalculationMethod, 
         [FromBody]
-        AsrJuristicMethods AsrJuristicMethod, 
+        Madhab AsrJuristicMethod, 
         [FromBody]
-        HighLatitudeAdjustmentMethods HighLatitudeAdjustmentMethod = HighLatitudeAdjustmentMethods.None);
+        HighLatitudeRule HighLatitudeAdjustmentMethod);
 }
