@@ -19,9 +19,9 @@ namespace PrayerTimes.Api
 
     public record PrayerTimesRequestForRange(
         [FromBody]
-        DateTime FromDate,
+        DateTimeOffset FromDate,
         [FromBody]
-        DateTime ToDate,
+        DateTimeOffset ToDate,
         [FromBody]
         double TimeZone,
         [FromBody]

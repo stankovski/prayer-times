@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using Batoulapps.Adhan;
+using Batoulapps.Adhan.Internal;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PrayerTimes.Api.Controllers
